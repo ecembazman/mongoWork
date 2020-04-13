@@ -23,10 +23,12 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:28.2-jre'
-	compile 'org.mongodb:mongo-java-driver:2.12.3'
+
+    compile 'org.mongodb:mongo-java-driver:2.12.3'
+
 	// https://mvnrepository.com/artifact/org.json/json
-	compile group: 'org.json', name: 'json', version: '20090211'
-	
+    compile group: 'org.json', name: 'json', version: '20090211'
+
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
