@@ -1,4 +1,4 @@
-package mongoCRUD;
+package mongoOperations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
