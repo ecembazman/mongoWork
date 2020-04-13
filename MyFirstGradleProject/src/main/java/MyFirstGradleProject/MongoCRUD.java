@@ -6,7 +6,6 @@ import java.util.HashMap;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
 
 import functionsForScore.*;
 import model.*;
@@ -14,7 +13,7 @@ import model.*;
 import mongoCRUD.*;
 
 public class MongoCRUD {
-	public static void main(String [] args) throws MongoException{
+	public static void main(String [] args){
 		try {
 			MongoClient client = new MongoClient("localhost",27017);
 			DB db = client.getDB( "school" );
@@ -47,9 +46,6 @@ public class MongoCRUD {
 			System.out.println(limitedQuizScoresList);
 		}
 		catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		catch (MongoException e) {
 			e.printStackTrace();
 		}
 	}
