@@ -4,7 +4,7 @@ public class Scores {
 
 	String type;
 	Double score;
-	
+
 	public String getType() {
 		return type;
 	}

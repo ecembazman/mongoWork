@@ -17,21 +17,21 @@ public class UseOfGetFileds{
 		DBCursor curs = collection.find(); 
 		Iterator<DBObject> fields = curs.iterator(); 
 		while(fields.hasNext()){ 
-		   BasicDBList dbList = (BasicDBList) fields.next().get(fieldName);
-		   BasicDBObject dbObj = (BasicDBObject) dbList.get(fieldIndex);
-		   
-		   Scores scores = new Scores();
-		   scores.setScore(dbObj.getDouble("score"));
-		   //System.out.println(scores.getScore());
-		   
-		   scores.setType(dbObj.getString("type"));
-		   //System.out.println(scores.getType());
-		   
-		   HashMap<String, Double> scoreWithType = new HashMap<String, Double>();
-		   scoreWithType.put(scores.getType(), scores.getScore());
-		   
-		   System.out.println(scoreWithType.toString());
-		   
+			BasicDBList dbList = (BasicDBList) fields.next().get(fieldName);
+			BasicDBObject dbObj = (BasicDBObject) dbList.get(fieldIndex);
+
+			Scores scores = new Scores();
+			scores.setScore(dbObj.getDouble("score"));
+			//System.out.println(scores.getScore());
+
+			scores.setType(dbObj.getString("type"));
+			//System.out.println(scores.getType());
+
+			HashMap<String, Double> scoreWithType = new HashMap<String, Double>();
+			scoreWithType.put(scores.getType(), scores.getScore());
+
+			System.out.println(scoreWithType.toString());
+
 		} 
 	}
 }
