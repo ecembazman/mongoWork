@@ -119,7 +119,7 @@ public class MongoCRUD {
 		}
 	}
 
-	public void regex_Example(DBCollection collection, String fieldName, String recordName) {
+	public void regexOfCollection(DBCollection collection, String fieldName, String recordName) {
 		BasicDBObject regexQuery = new BasicDBObject();
 		regexQuery.put(fieldName, 
 				new BasicDBObject("$regex", recordName)

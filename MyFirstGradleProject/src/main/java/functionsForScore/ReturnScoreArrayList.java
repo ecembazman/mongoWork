@@ -31,7 +31,6 @@ public class ReturnScoreArrayList {
 				}
 			} 
 		}
-
 		return scoreList;
 	}
 }

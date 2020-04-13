@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import functionsForScore.*;
 import model.*;
+import mongoOperations.*;
 
 public class MongoMain {
 	public static void main(String [] args){
@@ -11,32 +12,33 @@ public class MongoMain {
 		mongoDb.connectMongoDb();
 		mongoDb.setMongoDatabase("school");
 		mongoDb.setMognoCollection("students");
-		
-//		 (mongoDb.getMongoCollection(), 2, 4);
-//		 UseOfLessAndGrater.lessThan_GreaterThan_Example(mongoDb.getMongoCollection(), 2, 4);
-//		 UseOfFind.selectAllRecordsFromACollection(mongoDb.getMongoCollection());
-//		 UseOfNotIn.negation_Example(mongoDb.getMongoCollection(), 5);
-//		 UseOfLogicAnd.andLogicalComparison_Example(mongoDb.getMongoCollection(), 9, "Sanda Ryba");
-//		 UseOfLogicOr.orLogicalComparison_Example(mongoDb.getMongoCollection(), 9, "Sanda Ryba");
-//		 UseOfRegex.regex_Example(mongoDb.getMongoCollection(), "Sanda Ryba");
-//		 UseOfFindOne.selectFirstRecordInCollection(mongoDb.getMongoCollection());
-//		 UseOfGetFileds.getSpecificField(mongoDb.getMongoCollection(), "scores", 1);
+
+		MongoCRUD mongoCRUD = new MongoCRUD();
+//		mongoCRUD.lessThanGreaterThan(mongoDb.getMongoCollection(), "_id", 2, 6);
+//		mongoCRUD.selectAllRecordsFromACollection(mongoDb.getMongoCollection());
+//		mongoCRUD.notInCollection(mongoDb.getMongoCollection(), "_id" ,5);
+//		mongoCRUD.andLogicalComparison(mongoDb.getMongoCollection(), "_id", "name", 9, "Sanda Ryba");
+//		mongoCRUD.orLogicalComparison(mongoDb.getMongoCollection(), "_id", "name", 9, "Sanda Ryba");
+//		mongoCRUD.regexOfCollection(mongoDb.getMongoCollection(), "name", "Sanda Ryba");
+//		mongoCRUD.selectFirstRecordInCollection(mongoDb.getMongoCollection());
+//		mongoCRUD.getSpecificField(mongoDb.getMongoCollection(), "scores", "score", "type", 2);
 
 		Scores quizScores = new Scores();			 
-//		ShowScoreWithType.getSpecificScoreAndType(mongoDb.getMongoCollection(), "quiz", quizScores);
+		//ShowScoreWithType.getSpecificScoreAndType(mongoDb.getMongoCollection(), "quiz", quizScores);
 
 		HashMap<String, Double> quizScoresMap = new HashMap<String, Double>();
 		quizScoresMap = ReturnScoreMap.returnMap(mongoDb.getMongoCollection(), "quiz", quizScores);
 
 		ArrayList<Double> quizScoresList = new ArrayList<Double>();
 		quizScoresList = ReturnScoreArrayList.returnaArrayList(mongoDb.getMongoCollection(), "quiz", quizScores);
-//		System.out.println(quizScoresList);
+		//System.out.println(quizScoresList);
 
-//		ShowScoresLessAndGrater.setScoresListAndLimits(quizScoresList, 60.0, 90.0);
+		//ShowScoresLessAndGrater.setScoresListAndLimits(quizScoresList, 60.0, 90.0);
 
 		ArrayList<Double> limitedQuizScoresList = new ArrayList<Double>();
 		limitedQuizScoresList = ReturnLilmitedScoresList.returnLimitedList(quizScoresList, 60.0, 90.0);
 		System.out.println(limitedQuizScoresList);
 	}
+
 }
 
