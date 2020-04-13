@@ -30,7 +30,7 @@ public class MongoCRUD {
 			 //DBCursor cursor = collection.find();
 			 
 			 /*
-			 UseOf_in.in_Example(collection, 2, 4);
+			 UseOfIn.inExample(collection, 2, 4);
 			 UseOfLessAndGrater.lessThan_GreaterThan_Example(collection, 2, 4);
 			 UseOfFind.selectAllRecordsFromACollection(collection);
 			 UseOfNotIn.negation_Example(collection, 5);
