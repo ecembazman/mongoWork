@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Student {
 
-	String name;
-	int id;
-	List<Scores> scores;
+	private String name;
+	private int id;
+	private List<Scores> scores;
 
 	public String getName() {
 		return name;

@@ -2,8 +2,8 @@ package model;
 
 public class Scores {
 
-	String type;
-	Double score;
+	private String type;
+	private Double score;
 
 	public String getType() {
 		return type;
