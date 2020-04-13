@@ -3,6 +3,11 @@ package model;
 import java.util.List;
 
 public class Student {
+
+	String name;
+	int id;
+	List<Scores> scores;
+
 	public String getName() {
 		return name;
 	}
@@ -21,7 +26,4 @@ public class Student {
 	public void setScores(List<Scores> scores) {
 		this.scores = scores;
 	}
-	String name;
-	int id;
-	List<Scores> scores;
 }
