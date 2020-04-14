@@ -12,22 +12,26 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import model.Scores;
+import model.Student;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MongoCRUD {
+	private final Logger logger = LoggerFactory.getLogger(MongoCRUD.class);
 
 	public void selectAllRecordsFromACollection(DBCollection collection) 
 	{
 		DBCursor cursor = collection.find();
 		while(cursor.hasNext())
 		{
-			System.out.println(cursor.next());
+			logger.info(cursor.next().toString());
 		}
 	}
 
 	public void selectFirstRecordInCollection(DBCollection collection) 
 	{
 		DBObject dbObject = collection.findOne();
-		System.out.println(dbObject);
+		logger.info(dbObject.toString());
 	}
 
 	public void getSpecificField(DBCollection collection, String fieldName, String innerFieldName1, String innerFieldName2, int fieldIndex) {
