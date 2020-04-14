@@ -1,4 +1,5 @@
 package MyFirstGradleProject;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,7 +10,11 @@ import mongoOperations.*;
 public class MongoMain {
 	public static void main(String [] args){
 		MongoDb mongoDb = new MongoDb();
-		mongoDb.connectMongoDb();
+		try {
+			mongoDb.connectMongoDb();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		mongoDb.setMongoDatabase("school");
 		mongoDb.setMognoCollection("students");
 
