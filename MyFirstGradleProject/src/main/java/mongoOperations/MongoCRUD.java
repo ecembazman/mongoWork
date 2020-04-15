@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -18,6 +19,18 @@ import org.slf4j.LoggerFactory;
 
 public class MongoCRUD {
 	private final Logger logger = LoggerFactory.getLogger(MongoCRUD.class);
+	private DB mongoDatabase;
+	private DBCollection mongoCollection;
+
+	public MongoCRUD() {
+
+	}
+
+	public MongoCRUD(DB mongoDatabase, DBCollection mongoCollection) {
+		super();
+		this.mongoDatabase = mongoDatabase;
+		this.mongoCollection = mongoCollection;
+	}
 
 	public void selectAllRecordsFromACollection(DBCollection collection) 
 	{
