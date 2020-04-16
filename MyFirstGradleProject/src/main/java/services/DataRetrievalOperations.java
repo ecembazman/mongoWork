@@ -3,6 +3,7 @@ package services;
 import java.util.List;
 
 import exceptions.DatabaseConnectionProblem;
+import model.ScoreType;
 import model.Student;
 
 public interface DataRetrievalOperations {
@@ -14,6 +15,6 @@ public interface DataRetrievalOperations {
 	public List<Student> getMostSuccessfulStudents(int amount);
 
 	// TODO parametresine enum alacak
-	public Student getMostSuccessfulStudentByType();
+	public Student getMostSuccessfulStudentByType(ScoreType scoreType);
 
 }

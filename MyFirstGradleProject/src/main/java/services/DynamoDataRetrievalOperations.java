@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import exceptions.DatabaseConnectionProblem;
+import model.ScoreType;
 import model.Student;
 
 public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
@@ -27,7 +28,7 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	}
 
 	@Override
-	public Student getMostSuccessfulStudentByType() {
+	public Student getMostSuccessfulStudentByType(ScoreType scoreType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
