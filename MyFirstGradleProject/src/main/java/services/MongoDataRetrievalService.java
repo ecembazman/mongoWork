@@ -3,12 +3,14 @@ package services;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -53,9 +55,8 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		try {
 			connectMongoDb();
 			readDataUsingPojo();
-			System.out.println(getMostSuccessfulStudentByType(ScoreType.homework));
-			System.out.println(getMostSuccessfulStudentByType(ScoreType.exam));
-			System.out.println(getMostSuccessfulStudentByType(ScoreType.quiz));
+			System.out.println(getMostSuccessfulStudent());
+			System.out.println(getMostSuccessfulStudents(5));
 		} catch (UnknownHostException e) {
 			throw new DatabaseConnectionProblem();
 		}
@@ -65,11 +66,6 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 		MongoClient mongoClient = new MongoClient("localhost", 27017);
 		mongoDatabase = mongoClient.getDatabase("school");
-
-		for (String name : mongoDatabase.listCollectionNames()) {
-			System.out.println(name);
-		}
-
 		mongoCollection = mongoDatabase.getCollection("students");
 	}
 
@@ -82,31 +78,64 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 			while(cursor.hasNext())
 			{
-				//System.out.println(cursor.next().toJson());
 				myDoc = cursor.next();
 				student = gson.fromJson(myDoc.toJson(), Student.class);
 				studentsList.add(student);
 			}
-			// get all students' scores
-			/*
-			for (Student student : studentsList) {
-				System.out.println(student.getScores());
-			}
-			 */
 		}
 	}
 
 	// POJO
 	@Override
 	public Student getMostSuccessfulStudent() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Double> scoresList = new ArrayList<Double>();
+		Student mostSuccessfulStudent = new Student();
+
+		for (Student student : studentsList) {
+			scoresList.add(student.getScores().get(0).getScore());	
+		}
+
+		scoresList = scoresList.stream()
+				.sorted(Collections.reverseOrder()).collect(Collectors.toList());
+
+		for(Student student : studentsList) {
+			if(student.getScores().get(0).getScore() == scoresList.get(0)){
+				mostSuccessfulStudent = student;
+			}
+		}
+		logger.info("The most successful student: ");
+		return mostSuccessfulStudent;
 	}
 
 	@Override
 	public List<Student> getMostSuccessfulStudents(int amount) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Student> successfulStudentList = new ArrayList<Student>();
+
+		if(amount < studentsList.size()) {
+			List<Double> scoresList = new ArrayList<Double>();
+
+			for (Student student : studentsList) {
+				scoresList.add(student.getScores().get(0).getScore());	
+			}
+
+			scoresList = scoresList.stream()
+					.sorted(Collections.reverseOrder()).collect(Collectors.toList());
+
+			for(Student student : studentsList) {
+				for(int i=0; i<amount; i++) {
+					if(student.getScores().get(0).getScore() == scoresList.get(i)){
+						successfulStudentList.add(student);
+					}
+				}
+			}
+
+			logger.info("the most successful " + amount + " students: ");
+		}
+		else {
+			logger.error("invalid amount");
+		}
+
+		return successfulStudentList;
 	}
 
 	@Override
@@ -129,7 +158,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 			}
 		}
 
+		logger.info("The Most Successful Student By " + scoreType.toString());
 		return theMostSuccessfulStudentByType;
 	}
-
 }
