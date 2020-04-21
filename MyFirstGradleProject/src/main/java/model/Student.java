@@ -1,66 +1,44 @@
 package model;
 
 import java.util.List;
-import java.util.Objects;
 
 public class Student {
 
+	private int _id;
 	private String name;
-	private int id;
 	private List<Scores> scores;
 
-	public String getName() {
-		return name;
+	public void set_id(int _id){
+		this._id = _id;
 	}
-	public void setName(String name) {
+	public int get_id(){
+		return this._id;
+	}
+	public void setName(String name){
 		this.name = name;
 	}
-	public int getId() {
-		return id;
+	public String getName(){
+		return this.name;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public List<Scores> getScores() {
-		return scores;
-	}
-	public void setScores(List<Scores> scores) {
+	public void setScores(List<Scores> scores){
 		this.scores = scores;
+	}
+	public List<Scores> getScores(){
+		return this.scores;
 	}
 
 	@Override
 	public String toString() {
-		return "Student [name=" + name + ", id=" + id + ", scores=" + scores + "]";
+
+		String allScores = "";
+		for (Scores scr : scores) {
+			allScores = allScores + " " + scr.toString() + " ";
+		}
+
+		return "Student{" +
+		"_id=" + _id +
+		", name='" + name  +
+		", scores: " + allScores +
+		'}';
 	}
-
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, id, scores);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Student other = (Student) obj;
-		if (id != other.id)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (scores == null) {
-			if (other.scores != null)
-				return false;
-		} else if (!scores.equals(other.scores))
-			return false;
-		return true;
-	}
-
 }
