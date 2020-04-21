@@ -12,7 +12,7 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	@Override
 	public void init() throws DatabaseConnectionProblem {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

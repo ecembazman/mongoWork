@@ -13,7 +13,6 @@ public class ReportGenerator {
 		this.dataOperations = dataOperations;
 	}
 
-
 	public void report() {
 		try {
 			dataOperations.init();
