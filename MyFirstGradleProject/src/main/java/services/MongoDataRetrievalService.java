@@ -27,44 +27,64 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 	private final Logger logger = LoggerFactory.getLogger(MongoDataRetrievalService.class);
 
-	//private MongoClient mongoClient;
 	private MongoDatabase mongoDatabase;
 	private MongoCollection<Document> mongoCollection;
-	private Document myDoc;
-	private Student student;
 	private List<Student> studentsList;
+	
+	public MongoDatabase getMongoDatabase() {
+		return mongoDatabase;
+	}
+
+	public void setMongoDatabase(MongoDatabase mongoDatabase) {
+		this.mongoDatabase = mongoDatabase;
+	}
+
+	public MongoCollection<Document> getMongoCollection() {
+		return mongoCollection;
+	}
+
+	public void setMongoCollection(MongoCollection<Document> mongoCollection) {
+		this.mongoCollection = mongoCollection;
+	}
+
+	public List<Student> getStudentsList() {
+		return studentsList;
+	}
+
+	public void setStudentsList(List<Student> studentsList) {
+		this.studentsList = studentsList;
+	}
 
 	@Override
 	public void init() throws DatabaseConnectionProblem {
 		try {
 			connectMongoDb();
 			readDataUsingPojo();
-			System.out.println(getMostSuccessfulStudent());
-			System.out.println(getMostSuccessfulStudents(5));
 		} catch (UnknownHostException e) {
 			throw new DatabaseConnectionProblem();
 		}
 	}
 
 	private void connectMongoDb() throws UnknownHostException {
-
 		MongoClient mongoClient = new MongoClient("localhost", 27017);
-		mongoDatabase = mongoClient.getDatabase("school");
-		mongoCollection = mongoDatabase.getCollection("students");
+		setMongoDatabase(mongoClient.getDatabase("school"));
+		setMongoCollection(mongoDatabase.getCollection("students"));
 	}
 
 	private void readDataUsingPojo() {
+		MongoCollection mongoCollection = getMongoCollection();
 		if(mongoCollection.find().cursor().hasNext())
 		{
 			MongoCursor<Document> cursor = mongoCollection.find().cursor();
 			Gson gson = new Gson();
-			studentsList = new ArrayList<Student>();
+			List<Student> studentsList = new ArrayList<Student>();
 
 			while(cursor.hasNext())
 			{
-				myDoc = cursor.next();
-				student = gson.fromJson(myDoc.toJson(), Student.class);
+				Document myDoc = cursor.next();
+				Student student = gson.fromJson(myDoc.toJson(), Student.class);
 				studentsList.add(student);
+				setStudentsList(studentsList);
 			}
 		}
 	}
@@ -72,7 +92,10 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	// POJO
 	@Override
 	public Student getMostSuccessfulStudent() {
+		
 		List<Double> scoresList = new ArrayList<Double>();
+		List<Student> studentsList = getStudentsList();
+		
 		Student mostSuccessfulStudent = new Student();
 
 		for (Student student : studentsList) {
@@ -94,9 +117,10 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	@Override
 	public List<Student> getMostSuccessfulStudents(int amount) {
 		List<Student> successfulStudentList = new ArrayList<Student>();
+		List<Double> scoresList = new ArrayList<Double>();
+		List<Student> studentsList = getStudentsList();
 
 		if(amount < studentsList.size()) {
-			List<Double> scoresList = new ArrayList<Double>();
 
 			for (Student student : studentsList) {
 				scoresList.add(student.getScores().get(0).getScore());	
