@@ -3,7 +3,9 @@ package MyFirstGradleProjectTest;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -25,7 +27,6 @@ import model.Student;
 public class MongoDataRetrievalServiceTest {
 
 	private MongoClient mongoClient;
-	private MongoCollection<Student> mongoCollection;
 	private MongoDatabase mongoDatabase;
 
 	@Before
@@ -34,44 +35,39 @@ public class MongoDataRetrievalServiceTest {
 		try{          
 			mongoClient = new MongoClient("localhost", 27017);
 			mongoDatabase = mongoClient.getDatabase("school");
-			mongoDatabase.createCollection("testStudents");
-			mongoCollection = mongoDatabase.getCollection("testStudents", Student.class);
+
 		}catch(Exception e){
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
-	
+
 	@Test
 	public final void connectTest() {
+		mongoDatabase.createCollection("testStudents");
+
 		List<String> colNameListExpected = new ArrayList<String>();
 		List<String> colNameListActual = new ArrayList<String>();
 
-		colNameListExpected.add("testStudents");
 		colNameListExpected.add("students");
+		colNameListExpected.add("testStudents");
 
 		for (String name : mongoDatabase.listCollectionNames()) {
 			colNameListActual.add(name.toString());
 		}
-
+		mongoDatabase.getCollection("testStudents").drop();
 		assertEquals(colNameListExpected, colNameListActual);
 	}
 
-
 	@Test
-	public final void testGetMostSuccessfulStudentwithoutData() {
-
-	}
-
-	@Test
-	public final void readDataUsingPojoTest() {
+	public final void readDataUsingPojoWithoutCollectionTest() {
 		MongoCollection<Document> docCollection;
 		docCollection = mongoDatabase.getCollection("testStudents");
 
 		List<Student> studentsListActual = new ArrayList<Student>();
 		List<Student> studentsListExpected = new ArrayList<Student>();
-		
+
 		Student studentActual = new Student();
-		
+
 		if(docCollection.find().cursor().hasNext())
 		{
 			MongoCursor<Document> cursor = docCollection.find().cursor();
@@ -84,13 +80,88 @@ public class MongoDataRetrievalServiceTest {
 				studentsListActual.add(studentActual);
 			}
 		}
-
+		mongoDatabase.getCollection("testStudents").drop();
 		assertEquals(studentsListExpected, studentsListActual);
 	}
 
 	@Test
-	public final void testGetMostSuccessfulStudentwithData() {
-		//setup
+	public final void readDataUsingPojoWithCollectionTest() {
+
+		mongoDatabase.createCollection("testStudents");
+
+		MongoCollection<Document> docCollection;
+		docCollection = mongoDatabase.getCollection("testStudents");
+
+		List<Student> studentsListActual = new ArrayList<Student>();
+		List<Student> studentsListExpected = new ArrayList<Student>();
+
+		Student studentActual = new Student();
+
+		if(docCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = docCollection.find().cursor();
+			Gson gson = new Gson();
+
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				studentActual = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsListActual.add(studentActual);
+			}
+		}
+		mongoDatabase.getCollection("testStudents").drop();
+		assertEquals(studentsListExpected, studentsListActual);
+	}
+
+	@Test
+	public final void testGetMostSuccessfulStudentwithoutData() {
+		
+		mongoDatabase.createCollection("testStudents");
+		MongoCollection<Document> docCollection = mongoDatabase.getCollection("testStudents");
+
+		List<Student> studentsListActual = new ArrayList<Student>();
+		List<Double> scoresList = new ArrayList<Double>();
+
+		Student studentActual = new Student();
+		Student studentExpected = new Student();
+		Student mostSuccessfulStudentActual = new Student();
+
+		if(docCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = docCollection.find().cursor();
+			Gson gson = new Gson();
+
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				studentActual = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsListActual.add(studentActual);
+			}
+		}
+		
+		for (Student student : studentsListActual) {
+			scoresList.add(student.getScores().get(0).getScore());	
+		}
+
+		scoresList = scoresList.stream()
+				.sorted(Collections.reverseOrder()).collect(Collectors.toList());
+
+		for(Student student : studentsListActual) {
+			if(student.getScores().get(0).getScore() == scoresList.get(0)){
+				mostSuccessfulStudentActual = student;
+			}
+		}
+
+		mongoDatabase.getCollection("testStudents").drop();
+		assertEquals(studentExpected, mostSuccessfulStudentActual);
+	}
+
+	@Test
+	public final void testGetMostSuccessfulStudentwithDataTest() {
+		// setup
+		mongoDatabase.createCollection("testStudents");
+		MongoCollection<Student> mongoCollection = mongoDatabase.getCollection("testStudents", Student.class);
+		
 		List<Scores> batikanScoresList =  asList(new Scores(100.0, ScoreType.exam),
 				new Scores(90.3, ScoreType.quiz),
 				new Scores(90.1, ScoreType.homework));
@@ -109,17 +180,16 @@ public class MongoDataRetrievalServiceTest {
 				new Student(302, "Ahmet", ahmetScoresList));
 
 		mongoCollection.insertMany(testStudentsList);
-		
-		// execute
-		MongoCollection<Document> docCollection;
-		docCollection = mongoDatabase.getCollection("testStudents");
 
+		// execute
 		List<Student> studentsListActual = new ArrayList<Student>();
-		List<Student> studentsListExpected = new ArrayList<Student>();
-		
-		studentsListExpected = testStudentsList;
+		List<Double> scoresList = new ArrayList<Double>();
+
 		Student studentActual = new Student();
-		
+		Student studentExpected = new Student();
+		Student mostSuccessfulStudentActual = new Student();
+
+		MongoCollection<Document> docCollection = mongoDatabase.getCollection("testStudents");
 		if(docCollection.find().cursor().hasNext())
 		{
 			MongoCursor<Document> cursor = docCollection.find().cursor();
@@ -132,18 +202,38 @@ public class MongoDataRetrievalServiceTest {
 				studentsListActual.add(studentActual);
 			}
 		}
-		assertEquals(studentsListExpected, studentsListActual);
+		
+		for (Student student : studentsListActual) {
+			scoresList.add(student.getScores().get(0).getScore());	
+		}
+
+		scoresList = scoresList.stream()
+				.sorted(Collections.reverseOrder()).collect(Collectors.toList());
+
+		for(Student student : studentsListActual) {
+			if(student.getScores().get(0).getScore() == scoresList.get(0)){
+				mostSuccessfulStudentActual = student;
+			}
+		}
+
+		mongoDatabase.getCollection("testStudents").drop();
+		assertEquals(studentExpected, mostSuccessfulStudentActual);
 	}
 
-	/*	@Test
-
-	public final void testInit() {
-
+	@After
+	public final void afterDoing() {
+		mongoDatabase.getCollection("testStudents").drop();
 	}
 
+	/*
 	@Test
 	public final void testGetMostSuccessfulStudents() {
 		fail("Not yet implemented"); // TODO
+	}
+
+	/*	@Test
+	public final void testInit() {
+
 	}
 
 	@Test
@@ -211,10 +301,5 @@ public class MongoDataRetrievalServiceTest {
 		fail("Not yet implemented"); // TODO
 	}
 	 */
-	
-	@After
-	public final void afterDoing() {
-		mongoCollection.drop();
-	}
 
 }
