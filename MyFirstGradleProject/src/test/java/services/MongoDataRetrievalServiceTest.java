@@ -1,41 +1,36 @@
-package MyFirstGradleProjectTest;
-
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+package services;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
+
+import java.util.List;
 
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import model.ScoreType;
 import model.Scores;
 import model.Student;
-import services.MongoDataRetrievalService;
 
-public class MongoDataRetrievalServiceTest extends MongoDataRetrievalService{
+public class MongoDataRetrievalServiceTest {
 
 	private MongoClient mongoClient;
 	private MongoDatabase mongoDatabase;
+	private MongoDataRetrievalService mongoService;
 
 	@Before
 	public final void beforeDoing() {
 
 		try{          
 			MongoClient mongoClient = new MongoClient("localhost", 27017);
-			setMongoDatabase(mongoClient.getDatabase("school"));
+			mongoService.setMongoDatabase(mongoClient.getDatabase("school"));
 			mongoDatabase.getCollection("testStudents").drop();
 
 		}catch(Exception e){
@@ -45,11 +40,11 @@ public class MongoDataRetrievalServiceTest extends MongoDataRetrievalService{
 
 	@Test
 	public final void testGetMostSuccessfulStudentwithoutData() {		
-		MongoDatabase mongoDatabase = getMongoDatabase();
+		MongoDatabase mongoDatabase = mongoService.getMongoDatabase();
 		mongoDatabase.createCollection("testStudents");
-		setMongoCollection(mongoDatabase.getCollection("testStudents"));
-		MongoCollection<Student> mongoCollection = mongoDatabase.getCollection("testStudents", Student.class);
-		
+		MongoCollection<Document> mongoCollection = mongoDatabase.getCollection("testStudents");
+		mongoService.setMongoCollection(mongoCollection);
+
 		List<Scores> batikanScoresList =  asList(new Scores(100.0, ScoreType.exam),
 				new Scores(90.3, ScoreType.quiz),
 				new Scores(90.1, ScoreType.homework));
@@ -68,15 +63,15 @@ public class MongoDataRetrievalServiceTest extends MongoDataRetrievalService{
 				new Student(302, "Ahmet", ahmetScoresList));
 
 		mongoCollection.insertMany(testStudentsList);
-		setStudentsList(testStudentsList);
-		
-		Student studentActual = getMostSuccessfulStudent();
+		mongoService.setStudentsList(testStudentsList);
+
+		Student studentActual = mongoService.getMostSuccessfulStudent();
 		Student studentExpected = testStudentsList.get(0);
 
 		mongoDatabase.getCollection("testStudents").drop();
 		assertEquals(studentExpected, studentActual);
 	}
-	
+
 	@After
 	public final void afterDoing() {
 		mongoDatabase.getCollection("testStudents").drop();
