@@ -2,11 +2,8 @@ package MyFirstGradleProjectTest;
 
 import static org.junit.Assert.*;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.print.Doc;
 
 import static java.util.Arrays.asList;
 
@@ -16,12 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
 
 import model.ScoreType;
 import model.Scores;
@@ -31,7 +26,6 @@ public class MongoDataRetrievalServiceTest {
 
 	private MongoClient mongoClient;
 	private MongoCollection<Student> mongoCollection;
-	private MongoCollection<Document> docCollection;
 	private MongoDatabase mongoDatabase;
 
 	@Before
@@ -70,6 +64,7 @@ public class MongoDataRetrievalServiceTest {
 
 	@Test
 	public final void readDataUsingPojoTest() {
+		MongoCollection<Document> docCollection;
 		docCollection = mongoDatabase.getCollection("testStudents");
 
 		List<Student> studentsListActual = new ArrayList<Student>();
@@ -93,8 +88,6 @@ public class MongoDataRetrievalServiceTest {
 		assertEquals(studentsListExpected, studentsListActual);
 	}
 
-
-	/*
 	@Test
 	public final void testGetMostSuccessfulStudentwithData() {
 		//setup
@@ -116,11 +109,31 @@ public class MongoDataRetrievalServiceTest {
 				new Student(302, "Ahmet", ahmetScoresList));
 
 		mongoCollection.insertMany(testStudentsList);
+		
+		// execute
+		MongoCollection<Document> docCollection;
+		docCollection = mongoDatabase.getCollection("testStudents");
 
-		//execute TODO
+		List<Student> studentsListActual = new ArrayList<Student>();
+		List<Student> studentsListExpected = new ArrayList<Student>();
+		
+		studentsListExpected = testStudentsList;
+		Student studentActual = new Student();
+		
+		if(docCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = docCollection.find().cursor();
+			Gson gson = new Gson();
 
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				studentActual = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsListActual.add(studentActual);
+			}
+		}
+		assertEquals(studentsListExpected, studentsListActual);
 	}
-	 */
 
 	/*	@Test
 
