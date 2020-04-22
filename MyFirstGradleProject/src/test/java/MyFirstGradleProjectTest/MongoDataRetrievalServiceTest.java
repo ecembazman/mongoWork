@@ -5,15 +5,21 @@ import static org.junit.Assert.*;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.print.Doc;
+
 import static java.util.Arrays.asList;
 
 import org.bson.Document;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 
@@ -25,6 +31,7 @@ public class MongoDataRetrievalServiceTest {
 
 	private MongoClient mongoClient;
 	private MongoCollection<Student> mongoCollection;
+	private MongoCollection<Document> docCollection;
 	private MongoDatabase mongoDatabase;
 
 	@Before
@@ -33,20 +40,21 @@ public class MongoDataRetrievalServiceTest {
 		try{          
 			mongoClient = new MongoClient("localhost", 27017);
 			mongoDatabase = mongoClient.getDatabase("school");
-			//mongoDatabase.createCollection("testStudents");
+			mongoDatabase.createCollection("testStudents");
 			mongoCollection = mongoDatabase.getCollection("testStudents", Student.class);
 		}catch(Exception e){
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 		}
 	}
-
+	
 	@Test
 	public final void connectTest() {
 		List<String> colNameListExpected = new ArrayList<String>();
 		List<String> colNameListActual = new ArrayList<String>();
 
-		colNameListExpected.add("students");
 		colNameListExpected.add("testStudents");
+		colNameListExpected.add("students");
+
 		for (String name : mongoDatabase.listCollectionNames()) {
 			colNameListActual.add(name.toString());
 		}
@@ -54,13 +62,39 @@ public class MongoDataRetrievalServiceTest {
 		assertEquals(colNameListExpected, colNameListActual);
 	}
 
-	/*
 
 	@Test
 	public final void testGetMostSuccessfulStudentwithoutData() {
-		
+
 	}
 
+	@Test
+	public final void readDataUsingPojoTest() {
+		docCollection = mongoDatabase.getCollection("testStudents");
+
+		List<Student> studentsListActual = new ArrayList<Student>();
+		List<Student> studentsListExpected = new ArrayList<Student>();
+		
+		Student studentActual = new Student();
+		
+		if(docCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = docCollection.find().cursor();
+			Gson gson = new Gson();
+
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				studentActual = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsListActual.add(studentActual);
+			}
+		}
+
+		assertEquals(studentsListExpected, studentsListActual);
+	}
+
+
+	/*
 	@Test
 	public final void testGetMostSuccessfulStudentwithData() {
 		//setup
@@ -164,4 +198,10 @@ public class MongoDataRetrievalServiceTest {
 		fail("Not yet implemented"); // TODO
 	}
 	 */
+	
+	@After
+	public final void afterDoing() {
+		mongoCollection.drop();
+	}
+
 }
