@@ -6,7 +6,6 @@ public class School {
 	private List<Student> students;
 
 	public School(List<Student> students) {
-		super();
 		this.students = students;
 	}
 

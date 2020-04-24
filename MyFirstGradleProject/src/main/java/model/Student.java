@@ -8,17 +8,16 @@ public class Student {
 	private String name;
 	private List<Scores> scores;
 	
-	public Student() {
-
-	}
-	
 	public Student(int _id, String name, List<Scores> scores) {
-		super();
 		this._id = _id;
 		this.name = name;
 		this.scores = scores;
 	}
 	
+	public Student() {
+
+	}
+
 	public void set_id(int _id){
 		this._id = _id;
 	}
