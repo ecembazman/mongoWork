@@ -60,7 +60,6 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		try {
 			connectMongoDb();
 			readDataUsingPojo();
-			System.out.println(getMostSuccessfulStudent());
 		} catch (UnknownHostException e) {
 			throw new DatabaseConnectionProblem();
 		}

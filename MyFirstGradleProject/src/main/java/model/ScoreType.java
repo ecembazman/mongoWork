@@ -1,5 +1,5 @@
 package model;
 
 public enum ScoreType {
-	exam, quiz, homework
+	EXAM, QUIZ, HOMEWORK
 }

@@ -20,8 +20,9 @@ public class ReportGenerator {
 			System.err.println("There is an error" + e); // TODO error
 			return;
 		}
-		dataOperations.getMostSuccessfulStudentByType(ScoreType.homework);
-		// print 
+		
+		System.out.println(dataOperations.getMostSuccessfulStudent());
+		System.out.println(dataOperations.getMostSuccessfulStudentByType(ScoreType.HOMEWORK));
 	}
 
 }
