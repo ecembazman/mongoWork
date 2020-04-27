@@ -29,8 +29,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 	private MongoDatabase mongoDatabase;
 	private MongoCollection<Document> mongoCollection;
-	private List<Student> studentsList;
-	
+
 	public MongoDatabase getMongoDatabase() {
 		return mongoDatabase;
 	}
@@ -47,19 +46,10 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		this.mongoCollection = mongoCollection;
 	}
 
-	public List<Student> getStudentsList() {
-		return studentsList;
-	}
-
-	public void setStudentsList(List<Student> studentsList) {
-		this.studentsList = studentsList;
-	}
-
 	@Override
 	public void init() throws DatabaseConnectionProblem {
 		try {
 			connectMongoDb();
-			readDataUsingPojo();
 		} catch (UnknownHostException e) {
 			throw new DatabaseConnectionProblem();
 		}
@@ -71,31 +61,13 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		setMongoCollection(mongoDatabase.getCollection("students"));
 	}
 
-	private void readDataUsingPojo() {
-		MongoCollection mongoCollection = getMongoCollection();
-		if(mongoCollection.find().cursor().hasNext())
-		{
-			MongoCursor<Document> cursor = mongoCollection.find().cursor();
-			Gson gson = new Gson();
-			List<Student> studentsList = new ArrayList<Student>();
-
-			while(cursor.hasNext())
-			{
-				Document myDoc = cursor.next();
-				Student student = gson.fromJson(myDoc.toJson(), Student.class);
-				studentsList.add(student);
-				setStudentsList(studentsList);
-			}
-		}
-	}
-
 	// POJO
 	@Override
 	public Student getMostSuccessfulStudent() {
-		
+
 		List<Double> scoresList = new ArrayList<Double>();
-		List<Student> studentsList = getStudentsList();
-		
+		List<Student> studentsList = getStudents();
+
 		Student mostSuccessfulStudent = new Student();
 
 		for (Student student : studentsList) {
@@ -118,7 +90,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	public List<Student> getMostSuccessfulStudents(int amount) {
 		List<Student> successfulStudentList = new ArrayList<Student>();
 		List<Double> scoresList = new ArrayList<Double>();
-		List<Student> studentsList = getStudentsList();
+		List<Student> studentsList = getStudents();
 
 		if(amount < studentsList.size()) {
 
@@ -149,6 +121,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	@Override
 	public Student getMostSuccessfulStudentByType(ScoreType scoreType) {
 		Student theMostSuccessfulStudentByType = new Student();
+		List<Student> studentsList = getStudents();
 		List<Double> typeScores = new ArrayList<Double>();
 
 		for (Student student : studentsList) {
@@ -168,5 +141,30 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 		logger.info("The Most Successful Student By " + scoreType.toString());
 		return theMostSuccessfulStudentByType;
+	}
+
+	@Override
+	public List<Student> getStudents() {
+		return readDataUsingPojo();
+	}
+
+	private List<Student> readDataUsingPojo() {
+		List<Student> studentsList = new ArrayList<Student>();
+		MongoCollection mongoCollection = getMongoCollection();
+
+		if(mongoCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = mongoCollection.find().cursor();
+			Gson gson = new Gson();
+
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				Student student = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsList.add(student);
+			}
+		}
+
+		return studentsList;
 	}
 }

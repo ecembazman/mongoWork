@@ -10,6 +10,8 @@ public interface DataRetrievalOperations {
 
 	public void init() throws DatabaseConnectionProblem;
 
+	public List<Student> getStudents();
+
 	public Student getMostSuccessfulStudent();
 
 	public List<Student> getMostSuccessfulStudents(int amount);

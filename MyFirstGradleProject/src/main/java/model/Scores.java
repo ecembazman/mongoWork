@@ -4,12 +4,12 @@ public class Scores
 {
 	private double score;
 	private ScoreType type;
-	
+
 	public Scores(double score, ScoreType type) {
 		this.score = score;
 		this.type = type;
 	}
-	
+
 	public void setScore(double score){
 		this.score = score;
 	}

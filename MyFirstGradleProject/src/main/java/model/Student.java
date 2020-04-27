@@ -7,13 +7,13 @@ public class Student {
 	private int _id;
 	private String name;
 	private List<Scores> scores;
-	
+
 	public Student(int _id, String name, List<Scores> scores) {
 		this._id = _id;
 		this.name = name;
 		this.scores = scores;
 	}
-	
+
 	public Student() {
 
 	}

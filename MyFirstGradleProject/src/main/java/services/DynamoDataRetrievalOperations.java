@@ -33,4 +33,10 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 		return null;
 	}
 
+	@Override
+	public List<Student> getStudents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
