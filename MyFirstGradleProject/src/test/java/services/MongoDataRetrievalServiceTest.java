@@ -70,6 +70,6 @@ public class MongoDataRetrievalServiceTest {
 
 	@After
 	public final void afterDoing() {
-		mongoDatabase.getCollection("testStudents").drop();
+		//mongoDatabase.getCollection("testStudents").drop();
 	}
 }

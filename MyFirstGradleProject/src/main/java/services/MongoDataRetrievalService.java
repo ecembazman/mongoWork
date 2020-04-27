@@ -12,10 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
+
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+
 import com.google.gson.Gson;
 
 import model.Student;
@@ -47,18 +55,68 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	}
 
 	@Override
-	public void init() throws DatabaseConnectionProblem {
+	public void init(String databaseName, String collectionName) throws DatabaseConnectionProblem {
 		try {
-			connectMongoDb();
+			if(databaseName != "" && collectionName != "") {
+				connectMongoDb(databaseName, collectionName);
+			}
+			else {
+				logger.error("Invalid database or collection name");
+				throw new DatabaseConnectionProblem();
+			}
 		} catch (UnknownHostException e) {
 			throw new DatabaseConnectionProblem();
 		}
 	}
 
-	private void connectMongoDb() throws UnknownHostException {
-		MongoClient mongoClient = new MongoClient("localhost", 27017);
-		setMongoDatabase(mongoClient.getDatabase("school"));
-		setMongoCollection(mongoDatabase.getCollection("students"));
+	private void connectMongoDb(String databaseName, String collectionName) throws UnknownHostException {
+		//MongoClient mongoClient = new MongoClient("localhost", 27017);
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
+				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+
+		setMongoDatabase(mongoClient.getDatabase(databaseName));
+		setMongoCollection(mongoDatabase.getCollection(collectionName));	
+	}
+
+	@Override
+	public void addStudents(List<Student> studentsList) {
+		MongoDatabase mongoDatabase = getMongoDatabase();
+		MongoCollection<Student> collection = mongoDatabase.getCollection("students", Student.class);
+		collection.insertMany(studentsList);
+	}
+
+	@Override
+	public void addStudent(Student student) {
+		MongoDatabase mongoDatabase = getMongoDatabase();
+		MongoCollection<Student> collection = mongoDatabase.getCollection("students", Student.class);
+		collection.insertOne(student);
+	}
+
+	@Override
+	public List<Student> getStudents() {
+		return readDataUsingPojo();
+	}
+
+	private List<Student> readDataUsingPojo() {
+		List<Student> studentsList = new ArrayList<Student>();
+		MongoDatabase mongoDatabase = getMongoDatabase();
+		MongoCollection<Document> mongoColl = mongoDatabase.getCollection("students");
+
+		if(mongoCollection.find().cursor().hasNext())
+		{
+			MongoCursor<Document> cursor = mongoColl.find().cursor();
+			Gson gson = new Gson();
+
+			while(cursor.hasNext())
+			{
+				Document myDoc = cursor.next();
+				Student student = gson.fromJson(myDoc.toJson(), Student.class);
+				studentsList.add(student);
+				System.out.println(cursor.next().toJson());
+			}
+		}
+		return studentsList;
 	}
 
 	// POJO
@@ -143,28 +201,15 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		return theMostSuccessfulStudentByType;
 	}
 
+
 	@Override
-	public List<Student> getStudents() {
-		return readDataUsingPojo();
+	public void delete(String collectionName) {
+		mongoDatabase.getCollection(collectionName).drop();		
 	}
 
-	private List<Student> readDataUsingPojo() {
-		List<Student> studentsList = new ArrayList<Student>();
-		MongoCollection mongoCollection = getMongoCollection();
-
-		if(mongoCollection.find().cursor().hasNext())
-		{
-			MongoCursor<Document> cursor = mongoCollection.find().cursor();
-			Gson gson = new Gson();
-
-			while(cursor.hasNext())
-			{
-				Document myDoc = cursor.next();
-				Student student = gson.fromJson(myDoc.toJson(), Student.class);
-				studentsList.add(student);
-			}
-		}
-
-		return studentsList;
+	@Override
+	public void create(String collectionName) {
+		mongoDatabase.createCollection(collectionName);
 	}
+
 }

@@ -4,6 +4,10 @@ public class Scores
 {
 	private double score;
 	private ScoreType type;
+	
+	public Scores(){
+		
+	}
 
 	public Scores(double score, ScoreType type) {
 		this.score = score;

@@ -10,7 +10,7 @@ import model.Student;
 public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 
 	@Override
-	public void init() throws DatabaseConnectionProblem {
+	public void init(String databaseName, String collectionName) throws DatabaseConnectionProblem {
 		// TODO Auto-generated method stub
 
 	}
@@ -37,6 +37,30 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	public List<Student> getStudents() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addStudents(List<Student> studentsList) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addStudent(Student student) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void delete(String collectionName) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void create(String collectionName) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

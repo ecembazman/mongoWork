@@ -36,19 +36,4 @@ public class Student {
 	public List<Scores> getScores(){
 		return this.scores;
 	}
-
-	@Override
-	public String toString() {
-
-		String allScores = "";
-		for (Scores scr : scores) {
-			allScores = allScores + " " + scr.toString() + " ";
-		}
-
-		return "Student{" +
-		"_id=" + _id +
-		", name='" + name  +
-		", scores: " + allScores +
-		'}';
-	}
 }
