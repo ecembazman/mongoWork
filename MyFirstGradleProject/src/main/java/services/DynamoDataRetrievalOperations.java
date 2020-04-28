@@ -58,7 +58,7 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	}
 
 	@Override
-	public void create(String collectionName) {
+	public void createCollection(String collectionName) {
 		// TODO Auto-generated method stub
 
 	}

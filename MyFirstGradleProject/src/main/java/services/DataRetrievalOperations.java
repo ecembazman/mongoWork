@@ -12,7 +12,7 @@ public interface DataRetrievalOperations {
 
 	public void delete(String collectionName);
 
-	public void create(String collectionName);
+	public void createCollection(String collectionName);
 
 	public List<Student> getStudents();
 

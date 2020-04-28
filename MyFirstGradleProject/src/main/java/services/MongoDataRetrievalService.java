@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -112,8 +111,8 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 			{
 				Document myDoc = cursor.next();
 				Student student = gson.fromJson(myDoc.toJson(), Student.class);
-				studentsList.add(student);
 				System.out.println(cursor.next().toJson());
+				studentsList.add(student);
 			}
 		}
 		return studentsList;
@@ -208,7 +207,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	}
 
 	@Override
-	public void create(String collectionName) {
+	public void createCollection(String collectionName) {
 		mongoDatabase.createCollection(collectionName);
 	}
 
