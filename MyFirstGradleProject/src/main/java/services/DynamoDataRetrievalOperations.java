@@ -52,7 +52,7 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	}
 
 	@Override
-	public void delete(String collectionName) {
+	public void deleteCollection(String collectionName) {
 		// TODO Auto-generated method stub
 
 	}

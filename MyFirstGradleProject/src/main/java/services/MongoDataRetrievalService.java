@@ -202,7 +202,7 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 
 	@Override
-	public void delete(String collectionName) {
+	public void deleteCollection(String collectionName) {
 		mongoDatabase.getCollection(collectionName).drop();		
 	}
 

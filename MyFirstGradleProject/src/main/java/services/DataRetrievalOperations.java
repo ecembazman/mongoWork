@@ -10,7 +10,7 @@ public interface DataRetrievalOperations {
 
 	public void init(String databaseName, String collectionName) throws DatabaseConnectionProblem;
 
-	public void delete(String collectionName);
+	public void deleteCollection(String collectionName);
 
 	public void createCollection(String collectionName);
 
