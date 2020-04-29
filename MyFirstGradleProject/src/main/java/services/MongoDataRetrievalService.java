@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -37,19 +38,19 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 	private MongoDatabase mongoDatabase;
 	private MongoCollection<Document> mongoCollection;
 
-	public MongoDatabase getMongoDatabase() {
+	private MongoDatabase getMongoDatabase() {
 		return mongoDatabase;
 	}
 
-	public void setMongoDatabase(MongoDatabase mongoDatabase) {
+	private void setMongoDatabase(MongoDatabase mongoDatabase) {
 		this.mongoDatabase = mongoDatabase;
 	}
 
-	public MongoCollection<Document> getMongoCollection() {
+	private MongoCollection<Document> getMongoCollection() {
 		return mongoCollection;
 	}
 
-	public void setMongoCollection(MongoCollection<Document> mongoCollection) {
+	private void setMongoCollection(MongoCollection<Document> mongoCollection) {
 		this.mongoCollection = mongoCollection;
 	}
 
@@ -109,18 +110,19 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 
 			while(cursor.hasNext())
 			{
+
 				Document myDoc = cursor.next();
 				Student student = gson.fromJson(myDoc.toJson(), Student.class);
-				System.out.println(cursor.next().toJson());
 				studentsList.add(student);
 			}
 		}
+
 		return studentsList;
 	}
 
 	// POJO
 	@Override
-	public Student getMostSuccessfulStudent() {
+	public Optional<Student> getMostSuccessfulStudent() {
 
 		List<Double> scoresList = new ArrayList<Double>();
 		List<Student> studentsList = getStudents();
@@ -128,19 +130,31 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		Student mostSuccessfulStudent = new Student();
 
 		for (Student student : studentsList) {
-			scoresList.add(student.getScores().get(0).getScore());	
+			for(Scores scores : student.getScores()) {
+				if(scores.getType().equals(ScoreType.EXAM.toString())) {
+					scoresList.add(scores.getScore());	
+				}
+			}
 		}
 
 		scoresList = scoresList.stream()
 				.sorted(Collections.reverseOrder()).collect(Collectors.toList());
 
+		double maxScore = scoresList.stream().findFirst().get();
+
 		for(Student student : studentsList) {
-			if(student.getScores().get(0).getScore() == scoresList.get(0)){
-				mostSuccessfulStudent = student;
+			for(Scores scores : student.getScores()) {
+				if(scores.getScore() == maxScore){
+					mostSuccessfulStudent = student;
+				}
 			}
 		}
+
 		logger.info("The most successful student: ");
-		return mostSuccessfulStudent;
+
+		Optional<Student> optStudent = Optional.ofNullable(mostSuccessfulStudent);
+
+		return optStudent;
 	}
 
 	@Override
@@ -152,17 +166,23 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		if(amount < studentsList.size()) {
 
 			for (Student student : studentsList) {
-				scoresList.add(student.getScores().get(0).getScore());	
+				for(Scores scores : student.getScores()) {
+					if(scores.getType().equals(ScoreType.EXAM.toString())) {
+						scoresList.add(scores.getScore());	
+					}
+				}
 			}
 
 			scoresList = scoresList.stream()
 					.sorted(Collections.reverseOrder()).collect(Collectors.toList());
 
 			for(Student student : studentsList) {
-				for(int i=0; i<amount; i++) {
-					if(student.getScores().get(0).getScore() == scoresList.get(i)){
-						successfulStudentList.add(student);
-					}
+				for(Scores scores : student.getScores()) {
+					for(int i=0; i<amount; i++) {
+						if(scores.getScore() == scoresList.get(i)){
+							successfulStudentList.add(student);
+						}
+					}	
 				}
 			}
 

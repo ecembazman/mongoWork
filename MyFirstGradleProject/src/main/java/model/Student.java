@@ -1,14 +1,13 @@
 package model;
 
 import java.util.List;
-
 import org.bson.types.ObjectId;
 
 public class Student {
 
-	private ObjectId student_id;
 	private String name;
 	private List<Scores> scores;
+	private ObjectId student_id;
 
 	public Student(ObjectId student_id, String name, List<Scores> scores) {
 		this.student_id = student_id;

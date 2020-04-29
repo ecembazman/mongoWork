@@ -1,6 +1,7 @@
 package services;
 
 import java.util.List;
+import java.util.Optional;
 
 import exceptions.DatabaseConnectionProblem;
 import model.ScoreType;
@@ -20,7 +21,7 @@ public interface DataRetrievalOperations {
 
 	public void addStudent(Student student);
 
-	public Student getMostSuccessfulStudent();
+	public Optional<Student> getMostSuccessfulStudent();
 
 	public List<Student> getMostSuccessfulStudents(int amount);
 

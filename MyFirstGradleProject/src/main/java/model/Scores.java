@@ -3,13 +3,13 @@ package model;
 public class Scores
 {
 	private double score;
-	private ScoreType type;
+	private String type;
 	
 	public Scores(){
 		
 	}
 
-	public Scores(double score, ScoreType type) {
+	public Scores(double score, String type) {
 		this.score = score;
 		this.type = type;
 	}
@@ -20,10 +20,11 @@ public class Scores
 	public double getScore(){
 		return this.score;
 	}
-	public void setType(ScoreType scoreType){
+
+	public void setType(String scoreType){
 		this.type = scoreType;
 	}
-	public ScoreType getType(){
+	public String getType(){
 		return this.type;
 	}
 

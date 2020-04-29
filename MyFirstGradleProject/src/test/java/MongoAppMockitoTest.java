@@ -1,6 +1,8 @@
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Optional;
+
 import static java.util.Arrays.asList;
 
 import org.bson.codecs.ObjectIdGenerator;
@@ -27,7 +29,7 @@ public class MongoAppMockitoTest {
 
 	@BeforeClass
 	public static void setUp() throws DatabaseConnectionProblem{
-		
+
 	}
 
 	@Test
@@ -36,18 +38,19 @@ public class MongoAppMockitoTest {
 		DataRetrievalOperations ops = Mockito.mock(DataRetrievalOperations.class);
 
 		Student expectedStudent = new Student();
-		List<Scores> batikanScoresList =  asList(new Scores(99.9, ScoreType.exam),
-				new Scores(99.9, ScoreType.quiz),
-				new Scores(99.9, ScoreType.homework));
+		List<Scores> batikanScoresList =  asList(new Scores(100.0, ScoreType.EXAM.toString()),
+				new Scores(100.0, ScoreType.QUIZ.toString()),
+				new Scores(100.0, ScoreType.HOMEWORK.toString()));
 
-		expectedStudent.setStudent_id(null);
-		expectedStudent.setName("batikan");
+		expectedStudent.setStudent_id(new ObjectId("5ea9806d519ece2200c3ab5d"));
+		expectedStudent.setName("Batikan");
 		expectedStudent.setScores(batikanScoresList);
-		
+
+		Optional<Student> optStudent = Optional.ofNullable(expectedStudent);
 		//When
-		Mockito.when(ops.getMostSuccessfulStudent()).thenReturn(expectedStudent);
-		
+		Mockito.when(ops.getMostSuccessfulStudent()).thenReturn(optStudent);
+
 		//Then		
-		assertEquals(expectedStudent, ops.getMostSuccessfulStudent());
+		assertEquals(optStudent, ops.getMostSuccessfulStudent());
 	}
 }

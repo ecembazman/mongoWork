@@ -2,6 +2,7 @@ package services;
 
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Optional;
 
 import exceptions.DatabaseConnectionProblem;
 import model.ScoreType;
@@ -16,7 +17,7 @@ public class DynamoDataRetrievalOperations implements DataRetrievalOperations {
 	}
 
 	@Override
-	public Student getMostSuccessfulStudent() {
+	public Optional<Student> getMostSuccessfulStudent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
