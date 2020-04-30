@@ -127,6 +127,8 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 		List<Double> scoresList = new ArrayList<Double>();
 		List<Student> studentsList = getStudents();
 
+		Optional<Student> optStudent = Optional.empty();
+
 		Student mostSuccessfulStudent = new Student();
 
 		for (Student student : studentsList) {
@@ -150,10 +152,14 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 			}
 		}
 
-		logger.info("The most successful student: ");
+		optStudent = Optional.ofNullable(mostSuccessfulStudent);
 
-		Optional<Student> optStudent = Optional.ofNullable(mostSuccessfulStudent);
-
+		if(!optStudent.isPresent()) {
+			logger.error("Optional is empty");
+			optStudent = Optional.empty();
+			return optStudent;
+		}
+		logger.info("The most successful student: ");			
 		return optStudent;
 	}
 
