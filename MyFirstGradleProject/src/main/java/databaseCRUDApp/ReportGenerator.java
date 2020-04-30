@@ -37,6 +37,11 @@ public class ReportGenerator {
 		//		Student batikan = new Student(new ObjectId(), "Batikan", batikanScoresList);
 		//		dataOperations.addStudent(batikan);
 
-		System.out.println(dataOperations.getMostSuccessfulStudent());
+		if(dataOperations.getMostSuccessfulStudent().isPresent()) {
+			System.out.println(dataOperations.getMostSuccessfulStudent().get());
+		}
+		else {
+			System.out.println("Error: Optional is empty");
+		}
 	}
 }

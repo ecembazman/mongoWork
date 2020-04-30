@@ -151,15 +151,9 @@ public class MongoDataRetrievalService implements DataRetrievalOperations{
 				}
 			}
 		}
+		logger.info("The most successful student: ");			
 
 		optStudent = Optional.ofNullable(mostSuccessfulStudent);
-
-		if(!optStudent.isPresent()) {
-			logger.error("Optional is empty");
-			optStudent = Optional.empty();
-			return optStudent;
-		}
-		logger.info("The most successful student: ");			
 		return optStudent;
 	}
 

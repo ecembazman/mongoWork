@@ -38,6 +38,8 @@ public class MongoAppMockitoTest {
 		DataRetrievalOperations ops = Mockito.mock(DataRetrievalOperations.class);
 
 		Student expectedStudent = new Student();
+		Student actualStudent = new Student();
+
 		List<Scores> batikanScoresList =  asList(new Scores(100.0, ScoreType.EXAM.toString()),
 				new Scores(100.0, ScoreType.QUIZ.toString()),
 				new Scores(100.0, ScoreType.HOMEWORK.toString()));
@@ -47,10 +49,21 @@ public class MongoAppMockitoTest {
 		expectedStudent.setScores(batikanScoresList);
 
 		Optional<Student> optStudent = Optional.ofNullable(expectedStudent);
-		//When
-		Mockito.when(ops.getMostSuccessfulStudent()).thenReturn(optStudent);
 
-		//Then		
-		assertEquals(optStudent, ops.getMostSuccessfulStudent());
+		//When
+		Mockito.when(ops.getMostSuccessfulStudent()).thenReturn(optStudent);	
+
+		if(optStudent.isPresent()) {
+			actualStudent = optStudent.get();
+
+			//Then		
+			assertEquals(expectedStudent, actualStudent);
+		}
+		else {
+
+			//Then		
+			assertEquals(Optional.empty(), actualStudent);
+		}
+
 	}
 }
